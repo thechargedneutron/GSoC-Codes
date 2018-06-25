@@ -31,9 +31,9 @@ cylinderMapper.SetInputConnection(cylinder.GetOutputPort())
 # based on that normal. First lets modify the vertex
 # shader
 
-R = float(raw_input("Enter the Red Component (0-255) "))
-G = float(raw_input("Enter the Green Component (0-255) "))
-B = float(raw_input("Enter the Blue Component (0-255) "))
+R = float(input("Enter the Red Component (0-255) "))
+G = float(input("Enter the Green Component (0-255) "))
+B = float(input("Enter the Blue Component (0-255) "))
 
 
 # now modify the fragment shader
