@@ -49,6 +49,8 @@ def main():
     # "  gl_Position = gl_in[0].gl_Position + vec4(-20.0, 0.0, 0.0, 0.0);\n", #but we add this
     # False # only do it once
     # )
+
+
     # # mapper.SetGeometryShaderCode(
     # # "//VTK::System::Dec\n"  # always start with this line
     # # "layout(points) in;\n"
@@ -60,6 +62,8 @@ def main():
     # # "EndPrimitive;\n"
     # # "}\n"
     # # )
+
+
     actor = vtk.vtkActor()
     actor.SetMapper(mapper)
     actor.GetProperty().SetColor(colors.GetColor3d("Tomato"))
