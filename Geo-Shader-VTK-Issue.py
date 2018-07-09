@@ -6,7 +6,7 @@ Created on Mon Jul  9 20:41:35 2018
 """
 import vtk
 
-case = 2
+case = 3
 #### Case 1 for normal rendering of a line WITHOUT any Geometric Shader
 #### Case 2 for using SetRenderLinesAsTubes to render with the help of WideLineGS
 #### Case 3 for manually injecting Geometry Shader (NOT WORKING)
@@ -35,7 +35,7 @@ if case == 3:
         "//VTK::DepthPeeling::Dec\n"
         "//VTK::Clip::Dec\n"
         "//VTK::Output::Dec\n"
-        "uniform vec2 lineWidthNVC;\n"
+#        "uniform vec2 lineWidthNVC;\n"
         "layout(lines) in;\n"
         "layout(triangle_strip, max_vertices = 4) out;\n"
         "void main() {\n"
@@ -54,7 +54,7 @@ if case == 3:
         "//VTK::Picking::Impl\n"
         "//VTK::PositionVC::Impl\n"
         "gl_Position = vec4(\n"
-        "gl_in[i].gl_Position.xy + (lineWidthNVC*normal)*((j+1)%2 - 0.5)*gl_in[i].gl_Position.w, gl_in[i].gl_Position.z, gl_in[i].gl_Position.w);\n"
+        "gl_in[i].gl_Position.xy + (vec2(0.1, 0.1)*normal)*((j+1)%2 - 0.5)*gl_in[i].gl_Position.w, gl_in[i].gl_Position.z, gl_in[i].gl_Position.w);\n"
         "EmitVertex();\n"
         "}\n"
         "EndPrimitive();\n"
