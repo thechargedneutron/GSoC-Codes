@@ -1,5 +1,12 @@
-import vtk
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jul 23 20:21:03 2018
 
+@author: Ashu
+"""
+
+import vtk
+import numpy as np
 
 def main():
     colors = vtk.vtkNamedColors()
@@ -60,20 +67,40 @@ def main():
         //VTK::Clip::Dec
         //VTK::Output::Dec
         layout(points) in;
-        layout(line_strip, max_vertices = 11) out;
-        const float PI = 3.1415926;
+        layout(triangle_strip, max_vertices = 256) out;
+        int resolution=6;
+        int radius = 60;
+        void build_house(vec4 position, vec4 vert1, vec4 vert2, vec4 vert3)
+        {
+        gl_Position = position + vert1;
+        EmitVertex();
+        gl_Position = position + vert2;
+        EmitVertex();
+        gl_Position = position + vert3;
+        EmitVertex();
+        EndPrimitive();
+        }
         void main() {
-            vertexColorGSOutput = vertexColorVSOutput[0];
-
-            for (int i = 0; i <= 10; i++) {
-                float ang = PI * 2.0 / 10.0 * i;
-
-                vec4 offset = vec4(cos(ang)*60, -sin(ang) * 60, 0.0, 0.0);
-                gl_Position = gl_in[0].gl_Position + offset;
-
-                EmitVertex();
+        vertexColorGSOutput = vertexColorVSOutput[0];
+        for(int i=0; i<resolution; i++){
+            for(int j=0; j<resolution; j++){
+            float theta_1 = (3.1415 * 2.0)/(resolution) * i;
+            float theta_2 = (3.1415 * 2.0)/(resolution) * (i+1);
+            float phi_1 = (3.1415)/(resolution) * j;
+            float phi_2 = (3.1415)/(resolution) * (j+1);
+            vec4 a = vec4(radius*sin(phi_1)*cos(theta_1), radius*sin(phi_1)*sin(theta_1), radius*cos(phi_1), 0);
+            vec4 b = vec4(radius*sin(phi_1)*cos(theta_2), radius*sin(phi_1)*sin(theta_2), radius*cos(phi_1), 0);
+            vec4 c = vec4(radius*sin(phi_2)*cos(theta_1), radius*sin(phi_2)*sin(theta_1), radius*cos(phi_2), 0);
+            vec4 d = vec4(radius*sin(phi_2)*cos(theta_2), radius*sin(phi_2)*sin(theta_2), radius*cos(phi_2), 0);            
+            //vec4 a = vec4(60.0, 60.0, 0.0, 0.0);
+            //vec4 b = vec4(0.0, 60.0, 0.0, 0.0);
+            //vec4 c = vec4(60.0, 0.0, 0.0, 0.0);
+            build_house(gl_in[0].gl_Position, a, b, c);
+            build_house(gl_in[0].gl_Position, b, d, c);
             }
-            EndPrimitive();
+        }
+        //build_house(gl_in[0].gl_Position, vec4(60.0, 60.0, 60.0, 0.0), vec4(61.0, 60.0, 0.0, 0.0), vec4(60.0, 0.0, 0.0, 0.0));
+        //build_house(gl_in[0].gl_Position, vec4(80.0, -80.0, 0.0, 0.0));
         }
     """)
 
@@ -84,7 +111,7 @@ def main():
 
     renderer = vtk.vtkRenderer()
     renderWindow = vtk.vtkRenderWindow()
-    renderWindow.SetWindowName("Point")
+#    renderWindow.SetWindowName("Point")
     renderWindow.SetSize(500, 500)
     renderWindow.AddRenderer(renderer)
     renderWindowInteractor = vtk.vtkRenderWindowInteractor()
