@@ -53,6 +53,7 @@ def main():
     mapper.SetGeometryShaderCode("""
         //VTK::System::Dec
         //VTK::PositionVC::Dec
+        uniform mat4 MCDCMatrix;
         //VTK::PrimID::Dec
         // declarations below aren't necessary because
         // they are already injected by PrimID template
@@ -70,21 +71,21 @@ def main():
         layout(triangle_strip, max_vertices = 5) out;
         void build_house(vec4 position)
         {
-        gl_Position = position + vec4(-60.0, -60.0, 0.0, 0.0);
-        EmitVertex();
-        gl_Position = position + vec4(60.0, -60.0, 0.0, 0.0);
-        EmitVertex();
-        gl_Position = position + vec4(-60.0, 60.0, 0.0, 0.0);
-        EmitVertex();
-        gl_Position = position + vec4(60.0, 60.0, 0.0, 0.0);
-        EmitVertex();
-        gl_Position = position + vec4(0.0, 120.0, 0.0, 0.0);
-        EmitVertex();
-        EndPrimitive();
+            gl_Position = position + (MCDCMatrix * vec4(-6.0, -6.0, 0.0, 0.0));
+            EmitVertex();
+            gl_Position = position + (MCDCMatrix * vec4(6.0, -6.0, 0.0, 0.0));
+            EmitVertex();
+            gl_Position = position + (MCDCMatrix * vec4(-6.0, 6.0, 0.0, 0.0));
+            EmitVertex();
+            gl_Position = position + (MCDCMatrix * vec4(6.0, 6.0, 0.0, 0.0));
+            EmitVertex();
+            gl_Position = position + (MCDCMatrix * vec4(0.0, 12.0, 0.0, 0.0));
+            EmitVertex();
+            EndPrimitive();
         }
         void main() {
-        vertexColorGSOutput = vertexColorVSOutput[0];
-        build_house(gl_in[0].gl_Position);
+            vertexColorGSOutput = vertexColorVSOutput[0];
+            build_house(gl_in[0].gl_Position);
         }
     """)
 
@@ -106,7 +107,6 @@ def main():
 
     renderWindow.Render()
     renderWindowInteractor.Start()
-
 
 if __name__ == '__main__':
     main()
