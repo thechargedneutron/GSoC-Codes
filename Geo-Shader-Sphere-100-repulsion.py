@@ -6,6 +6,7 @@ Created on Fri Aug  3 17:40:55 2018
 """
 
 import vtk
+import dipy
 import numpy as np
 import dipy.viz.utils as ut_vtk
 from dipy.viz.utils import set_input
@@ -55,16 +56,18 @@ def main():
     mapper.SetInputData(point)
     
     #LOAD THE DIPY 100 Repulsion FILE
-    sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
-    faces = sphere['faces'].astype('i8')
-    vertices = sphere['vertices']
+#    sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
+#    faces = sphere['faces'].astype('i8')
+#    vertices = sphere['vertices']
+    sphere = dipy.data.get_sphere("repulsion100")
+    faces = sphere.faces
+    vertices = sphere.vertices
     
     my_polydata = vtk.vtkPolyData()
     ut_vtk.set_polydata_vertices(my_polydata, vertices)
     ut_vtk.set_polydata_triangles(my_polydata, faces)
 #    mapper = set_input(vtk.vtkOpenGLPolyDataMapper(), my_polydata)
     mapper.Update()
-    
 
     mapper.SetGeometryShaderCode("""
         //VTK::System::Dec
