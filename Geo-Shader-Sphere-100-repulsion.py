@@ -54,6 +54,9 @@ point.GetPointData().SetScalars(colorArray)
 mapper = vtk.vtkOpenGLPolyDataMapper()
 mapper.SetInputData(point)
 
+mapper2 = vtk.vtkOpenGLPolyDataMapper()
+mapper2.SetInputData(point)
+
 #LOAD THE DIPY 100 Repulsion FILE
 sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
 faces = sphere['faces'].astype('i8')
@@ -62,18 +65,45 @@ vertices = sphere['vertices']
 #    faces = sphere.faces
 #    vertices = sphere.vertices
 
-my_polydata = vtk.vtkPolyData()
-ut_vtk.set_polydata_vertices(my_polydata, vertices)
-ut_vtk.set_polydata_triangles(my_polydata, faces)
-#    mapper = set_input(vtk.vtkOpenGLPolyDataMapper(), my_polydata)
-mapper.Update()
+##################FINDING LIST OF VERTICES####################
+first=0
+second=1
+def find_instance(faces, first, second):
+    found_flag = 0
+    for i in range(196):
+        if faces[i, 0] == first and faces[i, 1] == second and found_flag == 0:
+            found_flag = 1
+            temp = faces[i, :]
+            x1 = temp[1]
+            x2 = temp[2]
+            final_vertices_list.append(x2)
+            faces[i, :] = np.array([-1,-1,-1])
+    if found_flag == 1:
+        return find_instance(faces, x1, x2)
+    else:
+        return 0
+            
+final_vertices_list = []
+for j in range(196):
+    x = faces[j, :] == np.array([-1, -1, -1])
+    if x.sum() == 0:
+        first = faces[j, 1]
+        second = faces[j, 2]
+        final_vertices_list.append(faces[j, 0])
+        final_vertices_list.append(faces[j, 1])
+        final_vertices_list.append(faces[j, 2])
+        find_instance(faces, first, second)
+############################################################
 
-mapper.SetGeometryShaderCode("""
+
+geometry_shader_code = """
     //VTK::System::Dec
     //VTK::PositionVC::Dec
     uniform mat4 MCDCMatrix;
     uniform vec3 vertices[100];
+    uniform vec3 order[330];
     uniform vec3 red[3];
+    uniform int delay=165;
     //VTK::PrimID::Dec
     // declarations below aren't necessary because
     // they are already injected by PrimID template
@@ -96,30 +126,20 @@ mapper.SetGeometryShaderCode("""
     void build_house(vec4 position)
     {
         //fColor = gs_in[1].color;
-        for(int g=0;g<100;g++){
-        gl_Position = position + (MCDCMatrix * vec4(vertices[g].x, vertices[g].y, vertices[g].z, 0.0));
+        for(int g=0;g<165;g++){
+        gl_Position = position + (MCDCMatrix * vec4(vertices[int(order[g+delay].x)].x, vertices[int(order[g+delay].x)].y, vertices[int(order[g+delay].x)].z, 0.0));
         EmitVertex();
         }
-        //gl_Position = position + (MCDCMatrix * vec4(red[0].x, red[0].y, red[0].z, 0.0));
-        //EmitVertex();
-        //gl_Position = position + (MCDCMatrix * vec4(red[1].x, red[1].y, 0.0, 0.0));
-        //EmitVertex();
-        //gl_Position = position + (MCDCMatrix * vec4(-6.0, 6.0, 0.0, 0.0));
-        //EmitVertex();
-        //gl_Position = position + (MCDCMatrix * vec4(6.0, 6.0, 0.0, 0.0));
-        //EmitVertex();
-        //gl_Position = position + (MCDCMatrix * vec4(0.0, 12.0, 0.0, 0.0));
-        //fColor = vec3(1.0, 1.0, 1.0)
-        //EmitVertex();
         EndPrimitive();
     }
     void main() {
         vertexColorGSOutput = vertexColorVSOutput[0];
         build_house(gl_in[0].gl_Position);
     }
-""")
-
-vertices = vertices * 10 #To increase radius of sphere
+"""
+mapper.SetGeometryShaderCode(geometry_shader_code)
+mapper2.SetGeometryShaderCode(geometry_shader_code)
+vertices = vertices * 15 #To increase radius of sphere
 
 @vtk.calldata_type(vtk.VTK_OBJECT)
 def vtkShaderCallback(caller, event, calldata=None):
@@ -127,20 +147,36 @@ def vtkShaderCallback(caller, event, calldata=None):
     if program is not None:
         for i in range(100):
             program.SetUniform3f("vertices[%d]"%(i), vertices[i].tolist())
-        program.SetUniform3f("red[0]", [-6.0,-6.0,0.0])
-        #program.SetUniform3f("red[1]", [6.0,-6.0,0.0])
-        #program.SetUniform3f("red${2}", [-6.0,6.0,0.0])
-        program.SetUniformf("green", float(100/255.0))
-        program.SetUniformf("blue", float(100/255.0))
+        for j in range(330):
+            program.SetUniform3f("order[%d]"%(j), [final_vertices_list[j], 0, 0])
+        program.SetUniformi("delay", 165)
 
 
 mapper.AddObserver(vtk.vtkCommand.UpdateShaderEvent,vtkShaderCallback)
+
+
+@vtk.calldata_type(vtk.VTK_OBJECT)
+def vtkShaderCallback2(caller, event, calldata=None):
+    program = calldata
+    if program is not None:
+        for i in range(100):
+            program.SetUniform3f("vertices[%d]"%(i), vertices[i].tolist())
+        for j in range(330):
+            program.SetUniform3f("order[%d]"%(j), [final_vertices_list[j], 0, 0])
+        program.SetUniformi("delay", 0)
+
+
+mapper2.AddObserver(vtk.vtkCommand.UpdateShaderEvent,vtkShaderCallback2)
 
 
 actor = vtk.vtkActor()
 actor.SetMapper(mapper)
 # actor.GetProperty().SetColor(colors.GetColor3d("Tomato"))
 actor.GetProperty().SetPointSize(2)
+
+actor2 = vtk.vtkActor()
+actor2.SetMapper(mapper2)
+actor2.GetProperty().SetPointSize(2)
 
 renderer = vtk.vtkRenderer()
 renderWindow = vtk.vtkRenderWindow()
@@ -151,6 +187,7 @@ renderWindowInteractor = vtk.vtkRenderWindowInteractor()
 renderWindowInteractor.SetRenderWindow(renderWindow)
 
 renderer.AddActor(actor)
+renderer.AddActor(actor2)
 renderer.SetBackground(colors.GetColor3d("Black"))
 
 renderWindow.Render()
