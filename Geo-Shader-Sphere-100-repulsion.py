@@ -6,31 +6,28 @@ Created on Fri Aug  3 17:40:55 2018
 """
 
 import vtk
-import dipy
 import numpy as np
-import dipy.viz.utils as ut_vtk
-from dipy.viz.utils import set_input
-
+#from random import randint
+import random
 
     
 colors = vtk.vtkNamedColors()
 
 # Create the geometry of a point (the coordinate)
 points = vtk.vtkPoints()
-p = [65.0, -65.0, 0.0]
-q = [65.0, 65.0, 0.0]
-r = [-65.0, 65.0, 0.0]
-s = [-65.0, -65.0, 0.0]
 
 # Create the topology of the point (a vertex)
 vertices = vtk.vtkCellArray()
 # We need an an array of point id's for InsertNextCell.
 pid = [0, 1000, 0, 0]
-pid[0] = points.InsertNextPoint(p)
-pid[1] = points.InsertNextPoint(q)
-pid[2] = points.InsertNextPoint(r)
-pid[3] = points.InsertNextPoint(s)
-vertices.InsertNextCell(4, pid)
+
+number_of_Spheres = 30000
+
+pid = [0]*number_of_Spheres
+for i in range(number_of_Spheres):
+    pid[i] = points.InsertNextPoint([random.uniform(0, 500), random.uniform(0, 500), random.uniform(0, 500)])
+
+vertices.InsertNextCell(number_of_Spheres, pid)
 
 # Create a polydata object
 point = vtk.vtkPolyData()
@@ -42,12 +39,10 @@ point.SetVerts(vertices)
 
 # Create array of vertex colors
 colorArray = vtk.vtkUnsignedCharArray()
-colorArray.SetNumberOfTuples(4)
+colorArray.SetNumberOfTuples(number_of_Spheres)
 colorArray.SetNumberOfComponents(3)
-colorArray.InsertTuple(0, (255, 0, 0))
-colorArray.InsertTuple(1, (0, 255, 0))
-colorArray.InsertTuple(2, (0, 0, 255))
-colorArray.InsertTuple(3, (255, 255, 255))
+for h in range(number_of_Spheres):
+    colorArray.InsertTuple(h, (random.uniform(0, 255), random.uniform(0, 255), random.uniform(0, 255)))
 point.GetPointData().SetScalars(colorArray)
 
 # Visualize
@@ -139,7 +134,7 @@ geometry_shader_code = """
 """
 mapper.SetGeometryShaderCode(geometry_shader_code)
 mapper2.SetGeometryShaderCode(geometry_shader_code)
-vertices = vertices * 15 #To increase radius of sphere
+vertices = vertices * 5 #To increase radius of sphere
 
 @vtk.calldata_type(vtk.VTK_OBJECT)
 def vtkShaderCallback(caller, event, calldata=None):
