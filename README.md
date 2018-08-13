@@ -39,7 +39,7 @@ Any 3D shape is made up of planar triangles. To understand how any 3D structure 
 (DEMO)
 
 ### Geometry Shader - 1D rendering of extended lines (_Geo-Shader-Working-Example.py_)
-Geometry Shader was given due importance in this project. This example was the first working example produced. This just amplifies one vertex to 5 vertex and joins them to form a wired frame of the polygon. The Geometry Shader code is injected by using the method `SetGeometryShaderCode`. The demo  is shown below:
+Geometry Shader was given due importance in this project. This example was the first working example produced. This just amplifies one vertex to 10 vertices and joins them to form a wired frame of the polygon. The Geometry Shader code is injected by using the method `SetGeometryShaderCode`. The demo  is shown below:
 
 (DEMO)
 
