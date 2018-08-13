@@ -30,7 +30,11 @@ This example was a good introduction to use SetUniform method to inject uniform 
 
 ### Slider to change axes value of an ellipsoid (_ellipsoid_with_slider.py_)
 This is more or less similar to the previous example but this time the passing of values is dynamic. Previously a sphere can have RGB values defined only at the start of the program and then it remains the same. In this case, the slider changes and the ellipsoid is rendered and updated continuously. Proper callbacks have been used to achieve this. The demo can be seen here:
-
+<div align="center">
+    <iframe width="620" height="315"
+        src="https://www.youtube.com/embed/o0LJGDgcxUc">
+    </iframe>
+</div>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/o0LJGDgcxUc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ### Low and High Resolution Spheres (_Low_Resolution_Sphere.py_ & _High_Resolution_Sphere.py_)
