@@ -195,7 +195,7 @@ def vtkShaderCallback4(caller, event, calldata=None):
     program = calldata
     if program is not None:
         for i in range(100):
-            program.SetUniform4f("vertices[%d]"%(i), vertices[i].tolist())
+            program.SetUniform3f("vertices[%d]"%(i), vertices[i].tolist())
         for j in range(330):
             program.SetUniform3f("order[%d]"%(j), [final_vertices_list[j], 0, 0])
         program.SetUniformi("delay", 247)
