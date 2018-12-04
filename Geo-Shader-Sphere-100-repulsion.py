@@ -10,7 +10,7 @@ import numpy as np
 #from random import randint
 import random
 
-    
+
 colors = vtk.vtkNamedColors()
 
 # Create the geometry of a point (the coordinate)
@@ -53,9 +53,13 @@ mapper2 = vtk.vtkOpenGLPolyDataMapper()
 mapper2.SetInputData(point)
 
 #LOAD THE DIPY 100 Repulsion FILE
-sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
-faces = sphere['faces'].astype('i8')
-vertices = sphere['vertices']
+# sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
+# faces = sphere['faces'].astype('i8')
+# vertices = sphere['vertices']
+
+faces = np.load('faces.npy')
+faces = faces.astype('i8')
+vertices = np.load('vertices.npy')
 #    sphere = dipy.data.get_sphere("repulsion100")
 #    faces = sphere.faces
 #    vertices = sphere.vertices
@@ -77,7 +81,7 @@ def find_instance(faces, first, second):
         return find_instance(faces, x1, x2)
     else:
         return 0
-            
+
 final_vertices_list = []
 for j in range(196):
     x = faces[j, :] == np.array([-1, -1, -1])

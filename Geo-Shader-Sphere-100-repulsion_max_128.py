@@ -10,7 +10,7 @@ import numpy as np
 #from random import randint
 import random
 
-    
+
 colors = vtk.vtkNamedColors()
 
 # Create the geometry of a point (the coordinate)
@@ -55,7 +55,7 @@ mapper2.SetInputData(point)
 mapper3 = vtk.vtkOpenGLPolyDataMapper()
 mapper3.SetInputData(point)
 #LOAD THE DIPY 100 Repulsion FILE
-sphere = np.load('C:/Users/Ashu/Downloads_New/dipy-master/dipy/data/files/repulsion100.npz')
+sphere = np.load('/home/geek-at-work/dipy/dipy/data/files/repulsion100.npz')
 faces = sphere['faces'].astype('i8')
 vertices = sphere['vertices']
 #    sphere = dipy.data.get_sphere("repulsion100")
@@ -79,7 +79,7 @@ def find_instance(faces, first, second):
         return find_instance(faces, x1, x2)
     else:
         return 0
-            
+
 final_vertices_list = []
 for j in range(196):
     x = faces[j, :] == np.array([-1, -1, -1])
@@ -116,9 +116,9 @@ geometry_shader_code = """
     //VTK::Output::Dec
     layout(points) in;
     layout(triangle_strip, max_vertices = 128) out;
-    in VS_OUT {
-              vec3 color;
-    } gs_in[];
+    //in VS_OUT {
+    //          vec3 color;
+    //} gs_in[];
     out vec3 fColor;
     void build_house(vec4 position)
     {

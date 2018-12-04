@@ -92,7 +92,7 @@ def main():
                     vec4 a = vec4(radius*sin(phi_1)*cos(theta_1), radius*sin(phi_1)*sin(theta_1), radius*cos(phi_1), 0);
                     vec4 b = vec4(radius*sin(phi_1)*cos(theta_2), radius*sin(phi_1)*sin(theta_2), radius*cos(phi_1), 0);
                     vec4 c = vec4(radius*sin(phi_2)*cos(theta_1), radius*sin(phi_2)*sin(theta_1), radius*cos(phi_2), 0);
-                    vec4 d = vec4(radius*sin(phi_2)*cos(theta_2), radius*sin(phi_2)*sin(theta_2), radius*cos(phi_2), 0);            
+                    vec4 d = vec4(radius*sin(phi_2)*cos(theta_2), radius*sin(phi_2)*sin(theta_2), radius*cos(phi_2), 0);
                     //vec4 a = vec4(60.0, 60.0, 0.0, 0.0);
                     //vec4 b = vec4(0.0, 60.0, 0.0, 0.0);
                     //vec4 c = vec4(60.0, 0.0, 0.0, 0.0);
